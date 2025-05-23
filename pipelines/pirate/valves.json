@@ -1,0 +1,1 @@
+{"OPENAI_API_BASE_URL": "https://the-labs.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-10-21", "AZURE_OPENAI_API_KEY": "gVxITX4995qye5dyRsolMyUUoPqSX4tS9BJcz7hawDpurO16bGn0JQQJ99BCAC5RqLJXJ3w3AAABACOG6xHR", "OPENAI_API_MODEL": "gpt-4o", "OPENAI_API_TEMPERATURE": 0.7, "AGENT_SYSTEM_PROMPT": "You are a helpful assistant"}
