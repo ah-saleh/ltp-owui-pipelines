@@ -1,9 +1,8 @@
-import os
 import requests
 import json
 from typing import List, Sequence
 from pydantic import BaseModel, Field
-from langchain_openai import ChatOpenAI, AzureChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import BaseTool, tool
@@ -46,8 +45,8 @@ def search_wikipedia(query: str) -> str:
 
 class Pipeline:
     class Valves(BaseModel):
-        OPENAI_API_BASE_URL: str = os.getenv("URL", "")
-        AZURE_OPENAI_API_KEY: str = ""
+        OPENAI_API_BASE_URL: str = ""
+        OPENAI_API_KEY: str = ""
         OPENAI_API_MODEL: str = "gpt-4o"
         OPENAI_API_TEMPERATURE: float = 0.7
         AGENT_SYSTEM_PROMPT: str = (
@@ -57,16 +56,14 @@ class Pipeline:
     def __init__(self):
         self.name = "Chat with Pirate"
         self.tools = [summation, multiplication, search_wikipedia]  # Add Wikipedia tool to the list
-        self.valves = self.Valves(
-            AZURE_OPENAI_API_KEY=os.getenv("AZURE_OPENAI_API_KEY", "")
-        )
+        self.valves = self.Valves()
         self.pipelines = self.get_openai_models()
 
     def get_openai_models(self):
-        if self.valves.AZURE_OPENAI_API_KEY:
+        if self.valves.OPENAI_API_KEY:
             try:
                 headers = {
-                    "Authorization": f"Bearer {self.valves.AZURE_OPENAI_API_KEY}",
+                    "Authorization": f"Bearer {self.valves.OPENAI_API_KEY}",
                     "Content-Type": "application/json"
                 }
                 response = requests.get(
@@ -85,11 +82,10 @@ class Pipeline:
 
     def pipe(self, user_message: str, model_id: str, messages: List[dict], body: dict):
         try:
-            model = AzureChatOpenAI(
-                azure_deployment="gpt-4o",
-                api_key=os.getenv("AZURE_AZURE_OPENAI_API_KEY"),
-                azure_endpoint="https://the-labs.openai.azure.com",
-                api_version="2024-10-21",
+            model = ChatOpenAI(
+                model="gpt-4o",
+                api_key=self.valves.OPENAI_API_KEY,
+                openai_api_base=self.valves.OPENAI_API_BASE_URL,
             )
 
             tools: Sequence[BaseTool] = self.tools
