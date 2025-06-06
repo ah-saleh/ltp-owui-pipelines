@@ -1,8 +1,9 @@
+import os
 import requests
 import json
 from typing import List, Sequence
 from pydantic import BaseModel, Field
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, AzureChatOpenAI
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.tools import BaseTool, tool
@@ -57,28 +58,28 @@ class Pipeline:
         self.name = "Chat with Pirate"
         self.tools = [summation, multiplication, search_wikipedia]  # Add Wikipedia tool to the list
         self.valves = self.Valves()
-        self.pipelines = self.get_openai_models()
+        # self.pipelines = self.get_openai_models()
 
-    def get_openai_models(self):
-        if self.valves.OPENAI_API_KEY:
-            try:
-                headers = {
-                    "Authorization": f"Bearer {self.valves.OPENAI_API_KEY}",
-                    "Content-Type": "application/json"
-                }
-                response = requests.get(
-                    f"{self.valves.OPENAI_API_BASE_URL}/models", headers=headers
-                )
-                models = response.json()
-                return [
-                    {"id": model["id"], "name": model.get("name", model["id"])}
-                    for model in models["data"] if "gpt" in model["id"]
-                ]
-            except Exception as e:
-                print(f"Error: {e}")
-                return [{"id": "error", "name": "Could not fetch models from OpenAI."}]
-        else:
-            return []
+    # def get_openai_models(self):
+    #     if self.valves.AZURE_OPENAI_API_KEY:
+    #         try:
+    #             headers = {
+    #                 "Authorization": f"Bearer {self.valves.AZURE_OPENAI_API_KEY}",
+    #                 "Content-Type": "application/json"
+    #             }
+    #             response = requests.get(
+    #                 f"{self.valves.OPENAI_API_BASE_URL}/models", headers=headers
+    #             )
+    #             models = response.json()
+    #             return [
+    #                 {"id": model["id"], "name": model.get("name", model["id"])}
+    #                 for model in models["data"] if "gpt" in model["id"]
+    #             ]
+    #         except Exception as e:
+    #             print(f"Error: {e}")
+    #             return [{"id": "error", "name": "Could not fetch models from OpenAI."}]
+    #     else:
+    #         return []
 
     def pipe(self, user_message: str, model_id: str, messages: List[dict], body: dict):
         try:
