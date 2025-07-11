@@ -55,6 +55,7 @@ langchain-experimental = "^0.3.4"
 pdfminer-six = "^20250327"
 pypdf2 = "^3.0.1"
 wikipedia = "^1.4.0"
+html2text = "^2025.4.15"
 
 
 [build-system]
